@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RetailOps 360 · Microsoft Fabric Master Course</title>
+  <meta name="description" content="Curso de 24 sesiones para dominar Microsoft Fabric construyendo RetailOps 360: Data Factory, OneLake, lakehouse, warehouse, streaming, gobierno, CI/CD y DP-700 como consecuencia.">
+  <link rel="stylesheet" href="assets/course.css">
+  <script>
+    try {
+      var t = localStorage.getItem("fabric-theme");
+      if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <main class="landing" id="contenido">
+    <div class="landing-top">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">R3</span>
+        <span>
+          <strong>RetailOps 360</strong>
+          <small>Fabric Master Course</small>
+        </span>
+      </a>
+      <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+        <span class="theme-toggle__label">Oscuro</span>
+      </button>
+    </div>
+
+    <section class="landing-hero">
+      <div class="landing-ornament" aria-hidden="true">F</div>
+      <ul class="eyebrow">
+        <li class="chip chip--accent">24 sesiones</li>
+        <li class="chip">2.5–3 h por sesión</li>
+        <li class="chip chip--soft">DP-700 como consecuencia</li>
+      </ul>
+      <h1>Fabric no se memoriza. <em>Se entiende.</em></h1>
+      <p class="lede">
+        Un curso para diseñar, construir y operar <strong>RetailOps 360</strong> en
+        Microsoft Fabric. Del mapa mental de capacity, workspace y OneLake a la
+        arquitectura que puedes defender en una entrevista senior.
+      </p>
+      <div class="landing-actions">
+        <a class="btn btn--primary" href="lessons/dia-04-data-factory-pipelines-i.html">
+          Entrar al Día 04
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn--ghost" href="#recorrido">Ver el recorrido</a>
+      </div>
+    </section>
+
+    <section class="landing-section" id="estado">
+      <h2>Retomamos en el Día 04</h2>
+      <p>
+        Ya completaste los Días 1–3: el mapa mental de Fabric, OneLake y el modelo
+        de capacity/gobierno. Esta edición HTML arranca en el punto donde el curso
+        se vuelve operativo: <strong>Data Factory y orquestación</strong>.
+      </p>
+      <div class="callout callout--key">
+        <div class="callout__icon" aria-hidden="true">i</div>
+        <div>
+          <p class="callout__title">La regla de esta edición</p>
+          <p>
+            No se re-enseña lo que ya dominas. Se recupera con preguntas, se conecta
+            con el proyecto y se lleva a la práctica. Cada sesión termina con algo
+            que puedes ejecutar, medir y explicar en voz alta.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="proyecto">
+      <h2>El proyecto: RetailOps 360</h2>
+      <p>
+        Una cadena de retail con ventas batch, eventos de punto de venta,
+        inventario y clickstream. Todo el curso construye una plataforma que une
+        esos mundos sin copiar datos innecesariamente.
+      </p>
+
+      <div class="arch">
+        <div class="arch__layer">
+          <p class="arch__label">Fuentes</p>
+          <div class="arch__boxes">
+            <div class="arch__box">CSV / JSON<small>Ventas y maestros</small></div>
+            <div class="arch__box">API<small>Precios y stock</small></div>
+            <div class="arch__box">POS events<small>Streaming</small></div>
+            <div class="arch__box">Clickstream<small>Comportamiento</small></div>
+          </div>
+        </div>
+        <div class="arch__arrow" aria-hidden="true">↓</div>
+        <div class="arch__layer">
+          <p class="arch__label">Ingesta y orquestación</p>
+          <div class="arch__boxes">
+            <div class="arch__box arch__box--accent">Data Factory<small>Pipelines y Copy</small></div>
+            <div class="arch__box">Dataflow Gen2<small>Transformación low-code</small></div>
+            <div class="arch__box">Eventstream<small>Streaming</small></div>
+            <div class="arch__box">Notebooks<small>PySpark</small></div>
+          </div>
+        </div>
+        <div class="arch__arrow" aria-hidden="true">↓</div>
+        <div class="arch__layer">
+          <p class="arch__label">OneLake · una sola copia</p>
+          <div class="arch__boxes">
+            <div class="arch__box arch__box--teal">lh_retailops<small>bronze · silver · gold</small></div>
+            <div class="arch__box arch__box--teal">wh_retailops<small>Marts T-SQL</small></div>
+            <div class="arch__box arch__box--teal">eh_retailops<small>KQL / tiempo real</small></div>
+            <div class="arch__box arch__box--teal">Shortcuts<small>Datos sin copia</small></div>
+          </div>
+        </div>
+        <div class="arch__arrow" aria-hidden="true">↓</div>
+        <div class="arch__layer">
+          <p class="arch__label">Consumo y acción</p>
+          <div class="arch__boxes">
+            <div class="arch__box arch__box--amber">Power BI<small>Semantic model</small></div>
+            <div class="arch__box arch__box--amber">Real-Time Dashboard<small>Operación</small></div>
+            <div class="arch__box arch__box--amber">Activator<small>Alertas</small></div>
+            <div class="arch__box arch__box--amber">Gobierno<small>Dominios y labels</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcomes">
+        <div class="outcome">
+          <strong>Batch + streaming</strong>
+          <span>No son dos cursos separados: son dos velocidades del mismo negocio.</span>
+        </div>
+        <div class="outcome">
+          <strong>Una sola copia</strong>
+          <span>OneLake, Delta e Iceberg como base; shortcuts y mirroring cuando aplican.</span>
+        </div>
+        <div class="outcome">
+          <strong>Operación real</strong>
+          <span>Costo, seguridad, observabilidad, CI/CD y rollback, no solo “funciona”.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="como">
+      <h2>Cómo se aprende aquí</h2>
+      <p>
+        La teoría importa. Pero una sesión no termina cuando entiendes: termina
+        cuando puedes construir, medir y defender la decisión.
+      </p>
+      <div class="steps">
+        <div class="step">
+          <span class="step__num">01</span>
+          <h3>Recuperas antes de avanzar</h3>
+          <p>Cinco preguntas de días anteriores, sin mirar apuntes. El curso no deja huecos silenciosos.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">02</span>
+          <h3>Ves el razonamiento</h3>
+          <p>Analogía, diagrama, teoría esencial y una demo guiada donde las decisiones se explican en voz alta.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">03</span>
+          <h3>Construyes y defiendes</h3>
+          <p>Laboratorio con criterio de éxito, errores provocados, drill de entrevista y teach-back de dos minutos.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="recorrido">
+      <h2>El recorrido</h2>
+      <p>
+        Cinco fases que construyen una plataforma, no una colección de tutoriales.
+        Cada sesión se apoya en la anterior.
+      </p>
+      <ol class="roadmap">
+        <li>
+          <span class="roadmap__phase">Fase 0</span>
+          <span class="roadmap__title">Fundamentos y plataforma <small>Días 1–3 · mapa mental, OneLake, capacidad y gobierno</small></span>
+          <span class="roadmap__state">Completado</span>
+        </li>
+        <li class="is-open">
+          <span class="roadmap__phase">Fase 1</span>
+          <span class="roadmap__title">Ingesta y orquestación <small>Días 4–8 · pipelines, incremental, Dataflow, Spark y patrones</small></span>
+          <a class="roadmap__state roadmap__state--open" href="lessons/dia-04-data-factory-pipelines-i.html">Disponible · Día 04</a>
+        </li>
+        <li>
+          <span class="roadmap__phase">Fase 2</span>
+          <span class="roadmap__title">Transformación, lakehouse y warehouse <small>Días 9–13 · medallion, SCD2, performance y T-SQL</small></span>
+          <span class="roadmap__state">Próximamente</span>
+        </li>
+        <li>
+          <span class="roadmap__phase">Fase 3</span>
+          <span class="roadmap__title">Real-Time Intelligence y consumo <small>Días 14–17 · Eventstream, KQL, Activator y Direct Lake</small></span>
+          <span class="roadmap__state">Próximamente</span>
+        </li>
+        <li>
+          <span class="roadmap__phase">Fase 4</span>
+          <span class="roadmap__title">Producción <small>Días 18–22 · seguridad, CI/CD, observabilidad, costo y reliability</small></span>
+          <span class="roadmap__state">Próximamente</span>
+        </li>
+        <li>
+          <span class="roadmap__phase">Fase 5</span>
+          <span class="roadmap__title">Capstone y DP-700 <small>Días 23–24 · RetailOps end-to-end, architecture review y entrevista</small></span>
+          <span class="roadmap__state">Próximamente</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="landing-section" id="dias">
+      <h2>Días publicados</h2>
+      <p>Los Días 1–3 se completaron en tu cuaderno anterior. Esta edición visual se publica desde el Día 4.</p>
+      <ul class="day-list">
+        <li>
+          <a class="day-card" href="lessons/dia-04-data-factory-pipelines-i.html">
+            <span class="day-card__num">04</span>
+            <span>
+              <span class="day-card__title">Data Factory pipelines I: el plano de control</span>
+              <span class="day-card__meta">Lección · Laboratorio · Solución y rúbrica</span>
+            </span>
+            <span class="day-card__arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <section class="landing-section" id="dp700">
+      <h2>DP-700: consecuencia, no meta</h2>
+      <p>
+        El examen valida lo que ya sabes hacer. El curso no memoriza la interfaz:
+        construye el criterio que el examen intenta medir.
+      </p>
+      <div class="grid grid--3">
+        <div class="card">
+          <span class="card__kicker">30–35%</span>
+          <h3>Implement and manage</h3>
+          <p>Workspace settings, lifecycle, seguridad y orquestación. Aquí viven los Días 4, 8, 18 y 19.</p>
+        </div>
+        <div class="card">
+          <span class="card__kicker">30–35%</span>
+          <h3>Ingest and transform</h3>
+          <p>Batch, streaming, shortcuts, pipelines, PySpark, SQL y KQL. Es el corazón de RetailOps 360.</p>
+        </div>
+        <div class="card">
+          <span class="card__kicker">30–35%</span>
+          <h3>Monitor and optimize</h3>
+          <p>Errores por workload, rendimiento y costo. Lo que separa “funciona” de “opera”.</p>
+        </div>
+      </div>
+      <div class="callout callout--exam">
+        <div class="callout__icon" aria-hidden="true">DP</div>
+        <div>
+          <p class="callout__title">Lente de examen</p>
+          <p>
+            Cada sesión incluye una sección “Así lo pregunta DP-700” y un drill de
+            entrevista. Si una decisión de producción choca con una respuesta de
+            examen, gana producción y se explica la diferencia.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="requisitos">
+      <h2>Qué necesitas (y qué no)</h2>
+      <div class="steps">
+        <div class="step">
+          <span class="step__num">A</span>
+          <h3>Base de ingeniería</h3>
+          <p>SQL, Python, Spark/Databricks, dbt y Git. No se re-enseñan desde cero; se conectan con Fabric.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">B</span>
+          <h3>Un tenant de práctica</h3>
+          <p>Trial de Fabric (60 días, F4 o F64) o una capacidad F de pago. Sin datos de empleadores ni credenciales corporativas.</p>
+        </div>
+        <div class="step">
+          <span class="step__num">C</span>
+          <h3>Datos sintéticos</h3>
+          <p>RetailOps 360 se genera con scripts. El curso no depende de Copilot, AI Functions ni Private Link.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="empezar">
+      <h2>Tu próxima sesión</h2>
+      <p>
+        El Día 4 convierte el mapa mental de Fabric en algo operativo: pipelines,
+        actividades, parámetros, expresiones, dependencias, reintentos y rutas de
+        fallo. Construirás `pl_ingest_batch` y aprenderás por qué un pipeline no
+        es un notebook con flechas.
+      </p>
+      <div class="landing-actions">
+        <a class="btn btn--primary" href="lessons/dia-04-data-factory-pipelines-i.html">
+          Abrir la lección del Día 04
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="btn btn--ghost" href="exercises/dia-04-ejercicios.html">Ver el laboratorio</a>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>RetailOps 360 · Microsoft Fabric Master Course · <span data-year>2026</span></span>
+      <div class="site-footer__links">
+        <a href="AGENTS.md">AGENTS.md</a>
+        <a href="README.md">README</a>
+        <a href="progress/session-log.md">Progreso</a>
+      </div>
+    </footer>
+  </main>
+
+  <script src="assets/course.js"></script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Día 04 · Laboratorio · Data Factory pipelines · RetailOps 360</title>
+  <meta name="description" content="Tres laboratorios del Día 4: pipeline parametrizado, archivo ausente y batch nocturno operable en Microsoft Fabric.">
+  <link rel="stylesheet" href="../assets/course.css">
+  <script>
+    try {
+      var t = localStorage.getItem("fabric-theme");
+      if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">R3</span>
+        <span>
+          <strong>RetailOps 360</strong>
+          <small>Fabric Master Course</small>
+        </span>
+      </a>
+
+      <nav class="side-nav" aria-label="Navegación del curso">
+        <p class="nav-label">Curso</p>
+        <a class="side-link" href="../index.html">Portada del curso</a>
+
+        <p class="nav-label">Fase 0 · Completada</p>
+        <span class="side-link is-complete">Días 01–03 · Fundamentos</span>
+
+        <p class="nav-label">Fase 1 · Ingesta</p>
+        <a class="side-link" href="../lessons/dia-04-data-factory-pipelines-i.html">Día 04 · Pipelines I</a>
+        <a class="side-link side-link--sub" href="../lessons/dia-04-data-factory-pipelines-i.html">Lección</a>
+        <a class="side-link side-link--sub is-active" href="dia-04-ejercicios.html" aria-current="page">Laboratorio</a>
+        <a class="side-link side-link--sub" href="../solutions/dia-04-solucion.html">Solución</a>
+        <a class="side-link is-locked" href="#" aria-disabled="true" tabindex="-1">Día 05 · Ingesta incremental</a>
+        <a class="side-link is-locked" href="#" aria-disabled="true" tabindex="-1">Día 06 · Dataflow Gen2</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="sidebar-note">75–120 minutos de laboratorio. Construir, romper, observar y defender.</p>
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <span class="theme-toggle__label">Oscuro</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main" id="contenido">
+      <div class="topbar">
+        <div class="crumbs">
+          <span>Fase 1</span><span aria-hidden="true">/</span><span>Día 04</span><span aria-hidden="true">/</span><strong>Laboratorio</strong>
+        </div>
+        <div class="topbar-meta">
+          <span class="read-time">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            75–120 min
+          </span>
+          <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+            <span class="theme-toggle__label">Oscuro</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="page-grid">
+        <article class="article">
+          <header class="hero">
+            <div class="hero-ornament" aria-hidden="true">L4</div>
+            <ul class="eyebrow">
+              <li class="chip chip--accent">Día 04 · Laboratorio</li>
+              <li class="chip">3 misiones</li>
+              <li class="chip chip--soft">75–120 min</li>
+            </ul>
+            <h1>Construye, rompe, <em>observa y defiende.</em></h1>
+            <p class="lede">
+              No vas a rellenar un ticket. Vas a construir el batch de ventas de
+              RetailOps 360, provocar fallos y decidir qué debe pasar a las 3 a.m.
+              cuando algo no llega.
+            </p>
+
+            <ul class="goals">
+              <li>Parametrizar un pipeline que sirva para varios días, no para uno.</li>
+              <li>Diseñar fallos visibles: contexto, evidencia y contención.</li>
+              <li>Separar retry de idempotencia antes de tocar producción.</li>
+              <li>Explicar tus decisiones como si estuvieras en una entrevista senior.</li>
+            </ul>
+
+            <div class="tldr">
+              <p class="tldr__label">Cómo trabajar</p>
+              <p><strong>1.</strong> Lee el contexto y escribe tu respuesta sin mirar la solución. <strong>2.</strong> Ejecuta en tu tenant de práctica; no uses datos de empleadores.</p>
+              <p><strong>3.</strong> Documenta evidencia: run ID, filas, errores, tabla. <strong>4.</strong> Al final, compara con la rúbrica y anota una decisión que cambiarías.</p>
+              <p><strong>Regla:</strong> si no puedes explicar por qué tomaste una decisión, todavía no la dominas.</p>
+            </div>
+          </header>
+
+          <section class="section" id="antes">
+            <div class="section-head">
+              <span class="section-index">00</span>
+              <h2>Antes de empezar</h2>
+            </div>
+            <div class="grid grid--3">
+              <div class="card">
+                <span class="card__kicker">Entorno</span>
+                <h3>Tenant de práctica</h3>
+                <p>Workspace <code>fabric-de-dev</code>, lakehouse <code>lh_retailops</code> con schema <code>bronze</code> y capacity Trial o F activa.</p>
+              </div>
+              <div class="card">
+                <span class="card__kicker">Datos</span>
+                <h3>Sintéticos</h3>
+                <p>Usa <code>datasets/generate_retailops.py</code> o un CSV pequeño propio. Nada de datos, capturas ni credenciales de tus empleadores.</p>
+              </div>
+              <div class="card">
+                <span class="card__kicker">Evidencia</span>
+                <h3>Bitácora</h3>
+                <p>Guarda run ID, parámetros usados, filas copiadas, error y conclusión. Una captura sin contexto no es evidencia.</p>
+              </div>
+            </div>
+            <div class="callout callout--warn">
+              <div class="callout__icon" aria-hidden="true">!</div>
+              <div>
+                <p class="callout__title">No hay una única respuesta correcta</p>
+                <p>
+                  Hay decisiones mejores y peores según el riesgo, el costo y el
+                  volumen. La solución no es una plantilla para copiar: es un
+                  razonamiento para comparar con el tuyo.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-1">
+            <div class="section-head">
+              <span class="section-index">01</span>
+              <h2>El primer vuelo de RetailOps</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">1</span> Guiada · pipeline base</span>
+                <div class="mission__meta">
+                  <span class="chip">30–40 min</span>
+                  <span class="chip">Dificultad 1/3</span>
+                  <span class="chip chip--soft">Individual</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Martes, 09:20. Diego quiere el primer batch de ventas funcionando antes de la demo del viernes.</p>
+
+                <div class="message message--email">
+                  <div class="message__meta">
+                    <strong>De: Diego · VP de Ingeniería de Datos</strong>
+                    <span class="message__time">09:20</span>
+                  </div>
+                  <p class="message__body"><strong>Asunto:</strong> Primer batch de RetailOps</p>
+                  <p class="message__body">Necesito que el viernes podamos cargar ventas de dos días distintos con el mismo pipeline. No quiero un copy hardcodeado que se rompa el lunes. Deja evidencia de que funciona y de que falla con contexto cuando el archivo no está.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li>Construye <code>pl_ingest_batch</code> con parámetros de fecha, archivo y tabla destino.</li>
+                  <li>Copia un CSV de ventas a <code>bronze.sales_raw</code> con mapping revisado.</li>
+                  <li>Ejecuta con dos fechas diferentes y demuestra que la ruta dinámica cambia.</li>
+                  <li>Configura un guard que falle si el copy devuelve cero filas.</li>
+                  <li>Documenta la evidencia: parámetros, run ID, filas copiadas y resultado.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Pipeline funcionando + tabla con dos ejecuciones (una por fecha) + una nota de 5 líneas explicando por qué Overwrite es aceptable en este laboratorio y qué cambiarías en el Día 5.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No hardcodees la fecha ni el nombre del archivo en la actividad.</li>
+                  <li>No uses Append para este ejercicio.</li>
+                  <li>No dejes el modo de escritura sin justificar.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: contrato</summary>
+                    <div class="reveal__body">Empieza por la tabla de parámetros. Si no puedes explicar qué entra al run, todavía no puedes construir el pipeline.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: evidencia</summary>
+                    <div class="reveal__body">El run history guarda más que “falló”. Busca parámetros, output de la Copy activity y filas copiadas.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-2">
+            <div class="section-head">
+              <span class="section-index">02</span>
+              <h2>El archivo que no llegó</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">2</span> Independiente · fallo controlado</span>
+                <div class="mission__meta">
+                  <span class="chip">30–40 min</span>
+                  <span class="chip">Dificultad 2/3</span>
+                  <span class="chip chip--soft">Individual</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Jueves, 02:55. El proveedor de archivos avisa que el envío puede retrasarse.</p>
+
+                <div class="message">
+                  <div class="message__meta">
+                    <strong>#data-alerts</strong>
+                    <span class="message__time">02:55</span>
+                  </div>
+                  <p class="message__body"><strong>Ana:</strong> el archivo de ventas a veces llega a las 03:05 y el pipeline arranca a las 03:00. Si no está, el copy falla y nos enteramos a las 7. Necesito que el pipeline lo detecte antes y deje un error útil, no un timeout genérico.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li>Diseña una verificación previa de existencia del archivo antes del copy. Puedes usar una actividad de metadatos o una comprobación equivalente.</li>
+                  <li>Si el archivo no existe, falla con un mensaje que incluya fecha, ruta y una acción sugerida.</li>
+                  <li>Si el archivo sí existe, continúa con el copy y el guard de filas.</li>
+                  <li>Decide qué errores merecen retry y cuáles no. Escribe la justificación.</li>
+                  <li>Prueba ambos caminos: archivo presente y archivo ausente. Guarda evidencia.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Pipeline con pre-check + dos runs documentados (presente/ausente) + tabla de política de retry: error, ¿retry?, por qué.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No reintentes un error de configuración o permisos.</li>
+                  <li>No uses un mensaje genérico como “falló el pipeline”.</li>
+                  <li>No asumas que el archivo existe porque “ayer existió”.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: antes del copy</summary>
+                    <div class="reveal__body">¿Qué actividad puede decirte si un archivo o carpeta existe sin moverlo? Piensa en metadatos, no en otra copia.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: mensaje útil</summary>
+                    <div class="reveal__body">Un guard de guardia necesita saber qué archivo, qué partición y qué run. Incluye esos tres datos en el error.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-3">
+            <div class="section-head">
+              <span class="section-index">03</span>
+              <h2>El batch de las 3 a.m.</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">3</span> Senior · incidente y diseño</span>
+                <div class="mission__meta">
+                  <span class="chip">45–60 min</span>
+                  <span class="chip">Dificultad 3/3</span>
+                  <span class="chip chip--soft">Equipo</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Lunes, 08:30. El batch nocturno falló, alguien lo re-ejecutó y ahora hay más filas que ayer.</p>
+
+                <div class="message message--alert">
+                  <div class="message__meta">
+                    <strong>De: Marta · Analytics Lead</strong>
+                    <span class="message__time">08:30</span>
+                  </div>
+                  <p class="message__body"><strong>Asunto:</strong> El stock está mal y el batch duplicó ventas</p>
+                  <p class="message__body">El pipeline falló a las 3:07. Alguien lo volvió a ejecutar a las 5:00 y ahora <code>bronze.sales_raw</code> tiene unas 12.000 filas de más. Tres tiendas muestran stock incorrecto. Necesito saber qué pasó, cómo evitar que se repita y cómo re-ejecutar sin miedo.</p>
+                </div>
+                <div class="message">
+                  <div class="message__meta">
+                    <strong>#data-alerts</strong>
+                    <span class="message__time">08:42</span>
+                  </div>
+                  <p class="message__body"><strong>Diego:</strong> y quiero saber si esto se puede detectar antes de que lo vea operaciones. No quiero otra reunión donde digamos “añadiremos un test”.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li><strong>Reconstruye el incidente:</strong> línea de tiempo, causa raíz y por qué el reintento duplicó.</li>
+                  <li><strong>Diseña el batch operable:</strong> qué actividades, parámetros, dependencias y write mode usarías para que re-ejecutar sea seguro. Puedes separar ingesta y publicación.</li>
+                  <li><strong>Contención y alerta:</strong> qué hace el pipeline cuando falla, qué evidencia deja y cómo se entera el equipo antes de las 7.</li>
+                  <li><strong>Costo y escala:</strong> qué cambiarías si el volumen crece 10x o si el archivo llega tres horas tarde.</li>
+                  <li><strong>Runbook:</strong> pasos exactos para recuperar, validar y comunicar.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Tabla de incidente (síntoma, causa, evidencia), diagrama del pipeline objetivo, ADR de write mode, runbook de recuperación y tres métricas que demostrarían que el problema no vuelve.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No propongas “revisar mejor” ni “añadir un test” sin decir qué se comprueba y qué bloquea.</li>
+                  <li>No asumas que el retry es seguro: justifica la idempotencia.</li>
+                  <li>No diseñes un monolito de 100 actividades; usa parent/child si aporta.</li>
+                  <li>No ocultes el trade-off de costo o latencia.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: la duplicación no es un bug del copy</summary>
+                    <div class="reveal__body">Si la escritura es Append y el run se repite, el resultado es el esperado por el diseño. El problema está en la decisión de write mode y en la clave de idempotencia.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: separa ingesta de publicación</summary>
+                    <div class="reveal__body">Una tabla staging o un batch_id puede permitir cargar, validar y publicar de forma atómica. No todo tiene que escribirse directo en la tabla que consume el negocio.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="antes-solucion">
+            <div class="section-head">
+              <span class="section-index">04</span>
+              <h2>Antes de abrir la solución</h2>
+            </div>
+            <ul class="checklist">
+              <li>
+                <label>
+                  <input type="checkbox" id="ex4-check-1" data-persist>
+                  <span>Ejecuté los pipelines en mi tenant, no solo los dibujé.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex4-check-2" data-persist>
+                  <span>Tengo evidencia de un run exitoso y de un run fallido con contexto.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex4-check-3" data-persist>
+                  <span>Puedo explicar por qué elegí Overwrite, Append o staging en cada misión.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex4-check-4" data-persist>
+                  <span>Mi política de retry distingue errores transitorios de permanentes.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex4-check-5" data-persist>
+                  <span>Podría explicar el diseño a un PM en dos minutos sin usar “clic”.</span>
+                </label>
+              </li>
+            </ul>
+
+            <div class="callout callout--staff">
+              <div class="callout__icon" aria-hidden="true">★</div>
+              <div>
+                <p class="callout__title">Cómo usar la solución</p>
+                <p>
+                  No busques una plantilla para replicar. Compara tu razonamiento:
+                  ¿qué riesgo viste tú que la solución no vio? ¿Qué supuesto tuyo no
+                  sobreviviría a un archivo que llega tarde o a un reintento?
+                </p>
+              </div>
+            </div>
+
+            <div class="hero-actions">
+              <a class="btn btn--primary" href="../solutions/dia-04-solucion.html">
+                Abrir solución y rúbrica
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <a class="btn btn--ghost" href="../lessons/dia-04-data-factory-pipelines-i.html">Volver a la lección</a>
+            </div>
+          </section>
+
+          <section class="section" id="entrevista">
+            <div class="section-head">
+              <span class="section-index">05</span>
+              <h2>Bonus: modo entrevista</h2>
+            </div>
+            <div class="callout callout--key">
+              <div class="callout__icon" aria-hidden="true">i</div>
+              <div>
+                <p class="callout__title">Pregunta de 90 segundos</p>
+                <p>
+                  “¿Cuándo usarías un pipeline y cuándo un notebook? Explícame un
+                  caso donde el pipeline sea el orquestador y otro donde el notebook
+                  sea el protagonista.”
+                </p>
+              </div>
+            </div>
+            <p>
+              Una respuesta fuerte menciona: separación de responsabilidades,
+              dependencias, parámetros, retries, lógica testeable, diagnóstico y
+              costo. Si además nombras un trade-off concreto, estás por encima de la
+              media.
+            </p>
+          </section>
+
+          <nav class="lesson-nav" aria-label="Navegación">
+            <a href="../lessons/dia-04-data-factory-pipelines-i.html">
+              <span class="lesson-nav__dir">Anterior</span>
+              <span class="lesson-nav__title">Lección del Día 04</span>
+            </a>
+            <a href="../solutions/dia-04-solucion.html">
+              <span class="lesson-nav__dir">Siguiente</span>
+              <span class="lesson-nav__title">Solución y rúbrica</span>
+            </a>
+          </nav>
+
+          <footer class="site-footer">
+            <span>RetailOps 360 · Microsoft Fabric Master Course · <span data-year>2026</span></span>
+            <div class="site-footer__links">
+              <a href="../lessons/dia-04-data-factory-pipelines-i.html">Lección</a>
+              <a href="../solutions/dia-04-solucion.html">Solución</a>
+              <a href="../index.html">Portada</a>
+            </div>
+          </footer>
+        </article>
+
+        <aside class="toc" aria-label="En este laboratorio">
+          <p class="toc__label">En este laboratorio</p>
+          <ul>
+            <li><a href="#antes">Antes de empezar</a></li>
+            <li><a href="#mision-1">01 · Primer vuelo</a></li>
+            <li><a href="#mision-2">02 · Archivo ausente</a></li>
+            <li><a href="#mision-3">03 · Batch de las 3 a.m.</a></li>
+            <li><a href="#antes-solucion">Antes de la solución</a></li>
+            <li><a href="#entrevista">Modo entrevista</a></li>
+          </ul>
+          <a class="toc__back" href="../solutions/dia-04-solucion.html">Ir a la solución →</a>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/course.js"></script>
+</body>
+</html>

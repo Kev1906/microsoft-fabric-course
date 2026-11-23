@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Día 04 · Solución y rúbrica · Data Factory pipelines · RetailOps 360</title>
+  <meta name="description" content="Solución razonada y rúbrica senior para el laboratorio de Data Factory pipelines del Día 4.">
+  <link rel="stylesheet" href="../assets/course.css">
+  <script>
+    try {
+      var t = localStorage.getItem("fabric-theme");
+      if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">R3</span>
+        <span>
+          <strong>RetailOps 360</strong>
+          <small>Fabric Master Course</small>
+        </span>
+      </a>
+
+      <nav class="side-nav" aria-label="Navegación del curso">
+        <p class="nav-label">Curso</p>
+        <a class="side-link" href="../index.html">Portada del curso</a>
+
+        <p class="nav-label">Fase 0 · Completada</p>
+        <span class="side-link is-complete">Días 01–03 · Fundamentos</span>
+
+        <p class="nav-label">Fase 1 · Ingesta</p>
+        <a class="side-link" href="../lessons/dia-04-data-factory-pipelines-i.html">Día 04 · Pipelines I</a>
+        <a class="side-link side-link--sub" href="../lessons/dia-04-data-factory-pipelines-i.html">Lección</a>
+        <a class="side-link side-link--sub" href="../exercises/dia-04-ejercicios.html">Laboratorio</a>
+        <a class="side-link side-link--sub is-active" href="dia-04-solucion.html" aria-current="page">Solución</a>
+        <a class="side-link is-locked" href="#" aria-disabled="true" tabindex="-1">Día 05 · Ingesta incremental</a>
+        <a class="side-link is-locked" href="#" aria-disabled="true" tabindex="-1">Día 06 · Dataflow Gen2</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="sidebar-note">Solo después de intentarlo. El valor está en comparar el razonamiento, no en copiar el pipeline.</p>
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <span class="theme-toggle__label">Oscuro</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main" id="contenido">
+      <div class="topbar">
+        <div class="crumbs">
+          <span>Fase 1</span><span aria-hidden="true">/</span><span>Día 04</span><span aria-hidden="true">/</span><strong>Solución</strong>
+        </div>
+        <div class="topbar-meta">
+          <span class="read-time">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            30–40 min
+          </span>
+          <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+            <span class="theme-toggle__label">Oscuro</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="page-grid">
+        <article class="article">
+          <header class="hero">
+            <div class="hero-ornament" aria-hidden="true">S4</div>
+            <ul class="eyebrow">
+              <li class="chip chip--accent">Día 04 · Solución</li>
+              <li class="chip">Rúbrica senior</li>
+              <li class="chip chip--soft">Después de intentarlo</li>
+            </ul>
+            <h1>La solución no es el pipeline. <em>Es el criterio con el que lo diseñas.</em></h1>
+            <p class="lede">
+              Hay muchas formas válidas de resolver estas misiones. Lo que separa
+              una respuesta junior de una Staff no es la cantidad de actividades:
+              es el contrato, la contención, la evidencia y la decisión explícita
+              sobre re-ejecución.
+            </p>
+
+            <div class="tldr">
+              <p class="tldr__label">Cómo leer esta página</p>
+              <p><strong>No copies.</strong> Compara. Pregúntate qué riesgo viste tú que aquí falta y qué supuesto tuyo no sobreviviría a un archivo tardío o a un reintento.</p>
+              <p><strong>Calibra.</strong> La rúbrica es 0–3 por criterio. Un 2 sólido es bueno; no necesitas 3 en todo para avanzar.</p>
+              <p><strong>Anota.</strong> Guarda una decisión que cambiarías después de leer. Ese es el aprendizaje real.</p>
+            </div>
+          </header>
+
+          <section class="section" id="enfoque">
+            <div class="section-head">
+              <span class="section-index">01</span>
+              <h2>Cómo aborda esto un Staff Engineer</h2>
+            </div>
+            <p>
+              Antes de las respuestas concretas, este es el orden mental que uso.
+              Sirve para cualquier pipeline de RetailOps, no solo para el Día 4.
+            </p>
+            <ol class="rail">
+              <li>
+                <span class="rail__dot">1</span>
+                <span class="rail__title">Define el contrato</span>
+                <span class="rail__body">Qué entra, qué sale, qué fecha, qué archivo, qué tabla y quién puede ejecutarlo. Si el contrato es borroso, el pipeline será frágil.</span>
+              </li>
+              <li>
+                <span class="rail__dot">2</span>
+                <span class="rail__title">Diseña la contención</span>
+                <span class="rail__body">Qué pasa si el archivo no llega, si el copy falla, si no hay filas o si el reintento se ejecuta dos veces. La ruta de fallo no arregla; contiene y hace visible.</span>
+              </li>
+              <li>
+                <span class="rail__dot">3</span>
+                <span class="rail__title">Deja evidencia</span>
+                <span class="rail__body">Run ID, parámetros, filas, output, error y resultado. Sin evidencia no hay operación, solo fe.</span>
+              </li>
+              <li>
+                <span class="rail__dot">4</span>
+                <span class="rail__title">Piensa en la re-ejecución</span>
+                <span class="rail__body">El botón Run debe ser seguro o debe estar protegido. Append ciego es una fábrica de duplicados.</span>
+              </li>
+              <li>
+                <span class="rail__dot">5</span>
+                <span class="rail__title">Nombra el trade-off</span>
+                <span class="rail__body">Overwrite vs merge, retry vs fail fast, pipeline vs notebook, staging vs directo. Toda decisión cuesta.</span>
+              </li>
+            </ol>
+          </section>
+
+          <section class="section" id="m1">
+            <div class="section-head">
+              <span class="section-index">02</span>
+              <h2>Misión 01 · El primer vuelo de RetailOps</h2>
+            </div>
+
+            <h3>Cómo lo abordaría</h3>
+            <p>
+              Primero escribo el contrato de parámetros, no la actividad. Si no sé
+              qué fecha, archivo y tabla recibe el run, no puedo probar dos fechas ni
+              defender el diseño. Después construyo el camino feliz y, por último, el
+              guard de filas y la evidencia.
+            </p>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Parámetro</th>
+                    <th scope="col">Ejemplo</th>
+                    <th scope="col">Por qué importa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row"><code>p_process_date</code></th>
+                    <td><code>2026-11-20</code></td>
+                    <td>Define la partición lógica y la ruta del archivo.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>p_source_file</code></th>
+                    <td><code>sales.csv</code></td>
+                    <td>Permite cambiar el nombre sin editar la actividad.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row"><code>p_target_table</code></th>
+                    <td><code>bronze.sales_raw</code></td>
+                    <td>Permite probar una tabla staging antes de publicar.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Una respuesta sólida</h3>
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-head__file">Contrato del pipeline</span>
+              </div>
+              <pre><code>pipeline pl_ingest_batch(p_process_date, p_source_file, p_target_table)
+
+  Set batch id:
+    var_batch_id = @guid()
+
+  Copy sales:
+    source = @concat(
+      'Files/landing/sales/',
+      pipeline().parameters.p_process_date,
+      '/',
+      pipeline().parameters.p_source_file
+    )
+    destination = @pipeline().parameters.p_target_table
+    write_mode = overwrite
+    retry = 2, interval = 30s, timeout = 30m
+
+  Rows copied?:
+    @greater(activity('Copy sales').output.rowsCopied, 0)
+
+  True  -> Set var_load_status = 'success'
+  False -> Fail NO_ROWS with file + date + run id</code></pre>
+            </div>
+
+            <h3>Evidencia de las dos ejecuciones</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Run</th>
+                    <th scope="col">p_process_date</th>
+                    <th scope="col">p_source_file</th>
+                    <th scope="col">Filas</th>
+                    <th scope="col">Resultado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td><code>2026-11-20</code></td>
+                    <td><code>sales.csv</code></td>
+                    <td>5.000</td>
+                    <td>Éxito, tabla reemplazada.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td><code>2026-11-21</code></td>
+                    <td><code>sales_2026-11-21.csv</code></td>
+                    <td>5.120</td>
+                    <td>Éxito, ruta dinámica distinta.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td><code>2026-11-22</code></td>
+                    <td><code>no_existe.csv</code></td>
+                    <td>—</td>
+                    <td>Fallo controlado con contexto.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout callout--staff">
+              <div class="callout__icon" aria-hidden="true">★</div>
+              <div>
+                <p class="callout__title">Por qué Overwrite es aceptable aquí</p>
+                <p>
+                  Porque el lote es pequeño, la tabla es bronze y el objetivo es
+                  demostrar un run repetible. No es la respuesta para un histórico de
+                  10 GB: reescribir todo cada día sería caro. En el Día 5 pasas a
+                  incremental con watermark y merge; esa es la evolución natural, no
+                  un fracaso del Día 4.
+                </p>
+              </div>
+            </div>
+
+            <h3>Lo que no haría</h3>
+            <ul>
+              <li>Hardcodear la fecha y el archivo en la actividad.</li>
+              <li>Usar Append “porque es más rápido” y luego re-ejecutar.</li>
+              <li>Declarar éxito con cero filas copiadas.</li>
+              <li>Entregar una captura de pantalla sin run ID, parámetros ni filas.</li>
+            </ul>
+
+            <div class="callout callout--key">
+              <div class="callout__icon" aria-hidden="true">i</div>
+              <div>
+                <p class="callout__title">Señales de un 3/3 en esta misión</p>
+                <p>
+                  El pipeline corre con dos fechas distintas, el guard de filas existe,
+                  la ruta de fallo deja contexto y la nota explica el trade-off de
+                  Overwrite con una alternativa para el Día 5.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="m2">
+            <div class="section-head">
+              <span class="section-index">03</span>
+              <h2>Misión 02 · El archivo que no llegó</h2>
+            </div>
+
+            <h3>Cómo lo abordaría</h3>
+            <p>
+              El fallo no es “el copy falló”. El fallo es “el archivo no está y el
+              pipeline no lo dijo con claridad”. Antes de copiar, verifico la
+              existencia y convierto la ausencia en un error de negocio explícito.
+              Después decido qué errores merecen retry y cuáles no.
+            </p>
+
+            <div class="arch">
+              <div class="arch__layer">
+                <p class="arch__label">Camino de verificación</p>
+                <div class="arch__boxes">
+                  <div class="arch__box">Get metadata<small>existe el archivo</small></div>
+                  <div class="arch__box arch__box--accent">If Condition<small>exists = true</small></div>
+                  <div class="arch__box arch__box--teal">Copy sales<small>continuar</small></div>
+                  <div class="arch__box arch__box--amber">Fail FILE_NOT_FOUND<small>fecha + ruta + run</small></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout callout--warn">
+              <div class="callout__icon" aria-hidden="true">!</div>
+              <div>
+                <p class="callout__title">Verifica el output de tu conector</p>
+                <p>
+                  La actividad de metadatos expone campos como existencia, tipo y
+                  tamaño, pero el nombre exacto depende del conector. Abre el output
+                  real del run antes de construir la condición. No confíes en una
+                  captura de otro tenant.
+                </p>
+              </div>
+            </div>
+
+            <h3>Política de retry</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Error</th>
+                    <th scope="col">¿Retry?</th>
+                    <th scope="col">Por qué</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Timeout de red</th>
+                    <td>Sí, acotado</td>
+                    <td>Puede ser transitorio; no quiere decir que el archivo esté mal.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">429 / throttling</th>
+                    <td>Sí, con backoff</td>
+                    <td>El servicio está limitando; esperar puede resolverlo.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Archivo inexistente</th>
+                    <td>No</td>
+                    <td>Reintentar no lo crea. Falla con contexto y escala.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Credencial inválida</th>
+                    <td>No</td>
+                    <td>Es un problema de identidad; reintentar solo retrasa el fallo.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Esquema incompatible</th>
+                    <td>No</td>
+                    <td>Necesita intervención o cuarentena, no más intentos.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Una respuesta sólida</h3>
+            <p>
+              El pipeline comprueba la existencia antes del copy. Si no existe, falla
+              con un mensaje como:
+            </p>
+            <div class="code-block">
+              <div class="code-head">
+                <span class="code-head__file">Mensaje de negocio</span>
+              </div>
+              <pre><code>FILE_NOT_FOUND | date=2026-11-21 |
+path=Files/landing/sales/2026-11-21/sales.csv |
+action=confirmar si el proveedor envió el archivo |
+run=@pipeline().RunId</code></pre>
+            </div>
+            <p>
+              Si el archivo existe, el copy sigue y el guard de filas se mantiene. El
+              retry se configura solo para errores transitorios; el archivo ausente
+              falla rápido.
+            </p>
+
+            <h3>Trade-off</h3>
+            <p>
+              La verificación previa añade una actividad y un pequeño costo. A cambio,
+              convierte un fallo ambiguo en un error de negocio claro. Si el archivo
+              llega siempre y el copy ya falla con buen contexto, podrías omitirla;
+              pero en RetailOps el archivo es la frontera con un proveedor y merece un
+              contrato explícito.
+            </p>
+
+            <h3>Lo que no haría</h3>
+            <ul>
+              <li>Reintentar la ausencia del archivo tres veces.</li>
+              <li>Usar un mensaje genérico que no diga qué archivo ni qué partición.</li>
+              <li>Confundir “archivo existe” con “archivo tiene datos válidos”: el guard de filas sigue siendo necesario.</li>
+            </ul>
+          </section>
+
+          <section class="section" id="m3">
+            <div class="section-head">
+              <span class="section-index">04</span>
+              <h2>Misión 03 · El batch de las 3 a.m.</h2>
+            </div>
+
+            <h3>Reconstrucción del incidente</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Hora</th>
+                    <th scope="col">Qué pasó</th>
+                    <th scope="col">Evidencia que faltaba</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">03:00</th>
+                    <td>Arranca <code>pl_ingest_batch</code>.</td>
+                    <td>Parámetros del run y batch_id.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">03:05</th>
+                    <td>El archivo del proveedor aún no llega.</td>
+                    <td>Chequeo de existencia o freshness.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">03:07</th>
+                    <td>El copy falla por timeout; no hay retry ni failure path.</td>
+                    <td>Error con archivo, fecha y run; notificación.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">05:00</th>
+                    <td>Alguien re-ejecuta manualmente sobre una tabla con Append.</td>
+                    <td>Política de re-ejecución idempotente y clave única.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">07:00</th>
+                    <td>El dashboard muestra duplicados y stock incorrecto.</td>
+                    <td>Validación de volumen/reconciliación post-carga.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">08:30</th>
+                    <td>Analytics escala el incidente.</td>
+                    <td>Alerta proactiva y runbook.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <p>
+              <strong>Causa raíz:</strong> el write mode era Append y el pipeline no
+              tenía una clave de idempotencia. El reintento manual no fue “un error
+              humano”: fue la consecuencia predecible de un diseño que permitía
+              duplicar. La falta de alerta solo hizo que se descubriera más tarde.
+            </p>
+
+            <h3>Diseño objetivo</h3>
+            <div class="arch">
+              <div class="arch__layer">
+                <p class="arch__label">Orquestación</p>
+                <div class="arch__boxes">
+                  <div class="arch__box arch__box--accent">pl_orchestrate<small>parent</small></div>
+                  <div class="arch__box">pl_ingest_batch<small>staging + batch_id</small></div>
+                  <div class="arch__box">pl_publish_sales<small>validar + merge</small></div>
+                  <div class="arch__box arch__box--teal">Post-validación<small>volumen + freshness</small></div>
+                </div>
+              </div>
+              <div class="arch__arrow" aria-hidden="true">↓</div>
+              <div class="arch__layer">
+                <p class="arch__label">Contención y evidencia</p>
+                <div class="arch__boxes">
+                  <div class="arch__box arch__box--amber">Failure path<small>error con contexto</small></div>
+                  <div class="arch__box arch__box--amber">Alerta<small>scheduled + monitoring</small></div>
+                  <div class="arch__box">Runbook<small>recuperar sin duplicar</small></div>
+                  <div class="arch__box">Métricas<small>duplicados, volumen, MTTR</small></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Decisión</th>
+                    <th scope="col">Alternativa</th>
+                    <th scope="col">Por qué la elegiría</th>
+                    <th scope="col">Consecuencia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Staging + MERGE por clave</th>
+                    <td>Append directo</td>
+                    <td>Re-ejecutar es idempotente; el negocio no ve filas a medias.</td>
+                    <td>Más compute y una tabla staging que mantener.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Parent/child</th>
+                    <td>Monolito de 100 actividades</td>
+                    <td>Ingesta y publicación tienen contratos y fallos separados.</td>
+                    <td>Más items y una capa de orquestación que documentar.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Alerta proactiva</th>
+                    <td>Solo run history</td>
+                    <td>El equipo se entera antes de las 7, no después.</td>
+                    <td>Requiere monitoring/Activator y un dueño de la alerta.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Retry acotado</th>
+                    <td>Retry infinito</td>
+                    <td>Contiene fallos transitorios sin amplificar duplicados.</td>
+                    <td>Puede dejar un fallo permanente sin escalar si no hay ruta de fallo.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>ADR de ejemplo</h3>
+            <div class="glossary">
+              <div class="glossary__row">
+                <span class="glossary__term">Decisión</span>
+                <span class="glossary__def">Cargar a staging y publicar con MERGE por <code>sale_id</code>, usando <code>batch_id</code> para trazabilidad.</span>
+              </div>
+              <div class="glossary__row">
+                <span class="glossary__term">Alternativas</span>
+                <span class="glossary__def">Append directo; overwrite completo; deduplicación posterior en gold.</span>
+              </div>
+              <div class="glossary__row">
+                <span class="glossary__term">Por qué</span>
+                <span class="glossary__def">El negocio consume bronze y no puede ver filas duplicadas ni lotes a medias. La re-ejecución debe ser segura.</span>
+              </div>
+              <div class="glossary__row">
+                <span class="glossary__term">Consecuencia</span>
+                <span class="glossary__def">Más costo de compute y una tabla staging; se compensa con menos incidentes y reprocesos.</span>
+              </div>
+            </div>
+
+            <h3>Runbook de recuperación</h3>
+            <ol>
+              <li><strong>Detectar:</strong> alerta de fallo o volumen anómalo; identificar batch, fecha y archivo.</li>
+              <li><strong>Contener:</strong> no re-ejecutar con Append; pausar la publicación si el lote está incompleto.</li>
+              <li><strong>Validar:</strong> contar filas, revisar claves duplicadas y comparar contra la línea base.</li>
+              <li><strong>Recuperar:</strong> reprocesar el mismo batch con MERGE; si hubo corrupción, restaurar o reprocesar desde la fuente.</li>
+              <li><strong>Comunicar:</strong> estado, impacto, siguiente actualización y hora estimada.</li>
+              <li><strong>Aprender:</strong> postmortem sin culpables; añadir el control que faltó y probarlo.</li>
+            </ol>
+
+            <h3>Métricas que demostrarían que no vuelve</h3>
+            <ul>
+              <li><strong>Duplicate rate</strong> en bronze por lote (objetivo 0).</li>
+              <li><strong>Detección</strong>: tiempo entre fallo y alerta (objetivo &lt; 10 min).</li>
+              <li><strong>Recovery time</strong>: tiempo entre detección y batch validado (objetivo &lt; 1 h).</li>
+              <li><strong>Row count vs baseline</strong>: desviación fuera de rango que bloquea publicación.</li>
+            </ul>
+
+            <h3>Lo que no haría</h3>
+            <ul>
+              <li>Decir “reintentamos y salió” sin comprobar duplicados.</li>
+              <li>Poner un test manual que nadie ejecuta.</li>
+              <li>Asumir que el proveedor siempre llegará a tiempo.</li>
+              <li>Diseñar un monolito que combine ingesta, transformación y publicación.</li>
+            </ul>
+          </section>
+
+          <section class="section" id="rubrica">
+            <div class="section-head">
+              <span class="section-index">05</span>
+              <h2>Rúbrica senior</h2>
+            </div>
+            <p>
+              Seis criterios, 0–3 cada uno. El curso considera aprobado un promedio
+              ≥ 2,5 y ningún criterio en 0. No es una nota escolar: es una calibración
+              para saber qué reforzar antes del Día 5.
+            </p>
+
+            <div class="rubric">
+              <div class="rubric__row rubric__row--head">
+                <span>Criterio</span><span>Puntos</span><span>Qué mira un Staff</span>
+              </div>
+              <div class="rubric__row">
+                <span>Corrección técnica</span><span class="rubric__score">0–3</span><span>El pipeline corre, los parámetros se usan, el mapping es correcto y el guard de filas funciona.</span>
+              </div>
+              <div class="rubric__row">
+                <span>Trade-offs</span><span class="rubric__score">0–3</span><span>Compara Overwrite/Append/Merge, retry/fail-fast y pipeline/notebook con consecuencias, no eslóganes.</span>
+              </div>
+              <div class="rubric__row">
+                <span>Operación</span><span class="rubric__score">0–3</span><span>Failure path, timeout, retry, evidencia y runbook. Sabe qué hacer a las 3 a.m.</span>
+              </div>
+              <div class="rubric__row">
+                <span>Costo y performance</span><span class="rubric__score">0–3</span><span>Reconoce CUs, reintentos, copias completas y el costo de staging/merge.</span>
+              </div>
+              <div class="rubric__row">
+                <span>Seguridad y gobierno</span><span class="rubric__score">0–3</span><span>No mete secretos en parámetros, piensa en identidades y en el blast radius del dato.</span>
+              </div>
+              <div class="rubric__row">
+                <span>Comunicación</span><span class="rubric__score">0–3</span><span>Explica el diseño en 90 segundos, con contexto, decisión, trade-off y métrica.</span>
+              </div>
+            </div>
+
+            <div class="score-scale">
+              <div class="score score--top">
+                <strong>2.5–3.0</strong>
+                <span>Staff: operable y defendible. Ningún criterio en 0.</span>
+              </div>
+              <div class="score">
+                <strong>2.0–2.4</strong>
+                <span>Sólido: funciona, pero falta un trade-off o una métrica.</span>
+              </div>
+              <div class="score">
+                <strong>1.0–1.9</strong>
+                <span>Junior: el camino feliz funciona; la operación queda para después.</span>
+              </div>
+              <div class="score score--low">
+                <strong>0–0.9</strong>
+                <span>Rehacer: no hay contrato, evidencia ni contención.</span>
+              </div>
+            </div>
+
+            <h3>Qué mide cada misión</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Misión</th>
+                    <th scope="col">Foco principal</th>
+                    <th scope="col">Señal de 3/3</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">01 · Primer vuelo</th>
+                    <td>Corrección, parámetros, evidencia.</td>
+                    <td>Dos fechas distintas, guard de filas y nota de Overwrite con evolución.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">02 · Archivo ausente</th>
+                    <td>Contención, retry, mensaje de negocio.</td>
+                    <td>Pre-check, error con fecha/ruta/run y política de retry justificada.</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">03 · Batch de las 3 a.m.</th>
+                    <td>Idempotencia, operación, costo, comunicación.</td>
+                    <td>Staging + merge, parent/child, alerta, runbook y métricas.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="callout callout--staff">
+              <div class="callout__icon" aria-hidden="true">★</div>
+              <div>
+                <p class="callout__title">Las cinco señales de una respuesta Staff</p>
+                <p>
+                  1) Contrato explícito. 2) Fallo contenido y visible. 3) Evidencia
+                  reproducible. 4) Re-ejecución segura o bloqueada. 5) Trade-off con
+                  costo, latencia o cobertura. Si falta una, todavía hay margen.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="cierre">
+            <div class="section-head">
+              <span class="section-index">06</span>
+              <h2>Qué sigue</h2>
+            </div>
+            <p>
+              El Día 5 convierte el copy en una carga incremental real: watermark,
+              CDC, duplicados, idempotencia y conectividad. Llega con el pipeline
+              funcionando y con una lista de dudas; no con una captura sin contexto.
+            </p>
+            <div class="callout callout--exam">
+              <div class="callout__icon" aria-hidden="true">DP</div>
+              <div>
+                <p class="callout__title">Antes de cerrar, responde en voz alta</p>
+                <p>
+                  “¿Por qué un pipeline no es un notebook con flechas?” Si tu respuesta
+                  menciona orquestación, dependencias, parámetros, retries y separación
+                  de la lógica de negocio, estás listo para seguir.
+                </p>
+              </div>
+            </div>
+
+            <div class="hero-actions">
+              <a class="btn btn--primary" href="../lessons/dia-04-data-factory-pipelines-i.html">
+                Volver a la lección
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+              </a>
+              <a class="btn btn--ghost" href="../exercises/dia-04-ejercicios.html">Repetir el laboratorio</a>
+            </div>
+          </section>
+
+          <section class="section" id="referencias">
+            <div class="section-head">
+              <span class="section-index">07</span>
+              <h2>Referencias</h2>
+            </div>
+            <p><strong>Docs verificadas:</strong> 2026-11-20.</p>
+            <ul>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/data-factory-overview" target="_blank" rel="noopener noreferrer">Data Factory overview</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/activity-overview" target="_blank" rel="noopener noreferrer">Activity overview</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/parameters" target="_blank" rel="noopener noreferrer">Parameters</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/expression-language" target="_blank" rel="noopener noreferrer">Expressions and functions</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/activity-retries" target="_blank" rel="noopener noreferrer">Activity retries</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/fabric/data-factory/copy-data-activity" target="_blank" rel="noopener noreferrer">Copy activity</a></li>
+              <li><a href="https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-700" target="_blank" rel="noopener noreferrer">DP-700 study guide</a></li>
+            </ul>
+          </section>
+
+          <nav class="lesson-nav" aria-label="Navegación">
+            <a href="../exercises/dia-04-ejercicios.html">
+              <span class="lesson-nav__dir">Anterior</span>
+              <span class="lesson-nav__title">Laboratorio del Día 04</span>
+            </a>
+            <a href="../index.html">
+              <span class="lesson-nav__dir">Siguiente</span>
+              <span class="lesson-nav__title">Portada del curso</span>
+            </a>
+          </nav>
+
+          <footer class="site-footer">
+            <span>RetailOps 360 · Microsoft Fabric Master Course · <span data-year>2026</span></span>
+            <div class="site-footer__links">
+              <a href="../lessons/dia-04-data-factory-pipelines-i.html">Lección</a>
+              <a href="../exercises/dia-04-ejercicios.html">Laboratorio</a>
+              <a href="../index.html">Portada</a>
+            </div>
+          </footer>
+        </article>
+
+        <aside class="toc" aria-label="En esta solución">
+          <p class="toc__label">En esta solución</p>
+          <ul>
+            <li><a href="#enfoque">Cómo piensa un Staff</a></li>
+            <li><a href="#m1">01 · Primer vuelo</a></li>
+            <li><a href="#m2">02 · Archivo ausente</a></li>
+            <li><a href="#m3">03 · Batch de las 3 a.m.</a></li>
+            <li><a href="#rubrica">Rúbrica senior</a></li>
+            <li><a href="#cierre">Qué sigue</a></li>
+            <li><a href="#referencias">Referencias</a></li>
+          </ul>
+          <a class="toc__back" href="../exercises/dia-04-ejercicios.html">Volver al laboratorio →</a>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/course.js"></script>
+</body>
+</html>
