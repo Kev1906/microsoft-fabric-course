@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Día 05 · Laboratorio · Ingesta incremental · RetailOps 360</title>
+  <meta name="description" content="Tres laboratorios del Día 5: Copy job incremental, pipeline con watermark explícito e incidente de duplicados con conectividad on-premises.">
+  <link rel="stylesheet" href="../assets/course.css">
+  <script>
+    try {
+      var t = localStorage.getItem("fabric-theme");
+      if (t) document.documentElement.dataset.theme = t;
+      else if (matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <div class="reading-progress" id="readingProgress" aria-hidden="true"></div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="../index.html">
+        <span class="brand-mark">R3</span>
+        <span>
+          <strong>RetailOps 360</strong>
+          <small>Fabric Master Course</small>
+        </span>
+      </a>
+
+      <nav class="side-nav" aria-label="Navegación del curso">
+        <p class="nav-label">Curso</p>
+        <a class="side-link" href="../index.html">Portada del curso</a>
+
+        <p class="nav-label">Fase 0 · Completada</p>
+        <span class="side-link is-complete">Días 01–03 · Fundamentos</span>
+
+        <p class="nav-label">Fase 1 · Ingesta</p>
+        <a class="side-link" href="../lessons/dia-04-data-factory-pipelines-i.html">Día 04 · Pipelines I</a>
+        <a class="side-link" href="../lessons/dia-05-ingesta-incremental.html">Día 05 · Ingesta incremental</a>
+        <a class="side-link side-link--sub" href="../lessons/dia-05-ingesta-incremental.html">Lección</a>
+        <a class="side-link side-link--sub is-active" href="dia-05-ejercicios.html" aria-current="page">Laboratorio</a>
+        <a class="side-link side-link--sub" href="../solutions/dia-05-solucion.html">Solución</a>
+        <a class="side-link is-locked" href="#" aria-disabled="true" tabindex="-1">Día 06 · Dataflow Gen2</a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <p class="sidebar-note">75–120 minutos. Construir, romper, re-ejecutar y defender.</p>
+        <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+          <span class="theme-toggle__label">Oscuro</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main" id="contenido">
+      <div class="topbar">
+        <div class="crumbs">
+          <span>Fase 1</span><span aria-hidden="true">/</span><span>Día 05</span><span aria-hidden="true">/</span><strong>Laboratorio</strong>
+        </div>
+        <div class="topbar-meta">
+          <span class="read-time">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            75–120 min
+          </span>
+          <button class="theme-toggle" type="button" aria-label="Cambiar tema" aria-pressed="false">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+            <span class="theme-toggle__label">Oscuro</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="page-grid">
+        <article class="article">
+          <header class="hero">
+            <div class="hero-ornament" aria-hidden="true">L5</div>
+            <ul class="eyebrow">
+              <li class="chip chip--accent">Día 05 · Laboratorio</li>
+              <li class="chip">3 misiones</li>
+              <li class="chip chip--soft">75–120 min</li>
+            </ul>
+            <h1>No recargues todo. <em>Demuestra qué cambió.</em></h1>
+            <p class="lede">
+              Vas a construir el incremental de ventas de RetailOps 360, romperlo en el
+              borde de la ventana y re-ejecutarlo sin duplicar. Después diseñarás la
+              recuperación de un cierre que ya se contaminó. La evidencia importa más que
+              el clic.
+            </p>
+
+            <ul class="goals">
+              <li>Elegir full, watermark o CDC con una justificación medible.</li>
+              <li>Implementar una ventana incremental y un rerun idempotente.</li>
+              <li>Probar filas tardías, fallos a mitad y deletes no capturados.</li>
+              <li>Diseñar conectividad on-premises con identidad y secretos.</li>
+            </ul>
+
+            <div class="tldr">
+              <p class="tldr__label">Cómo trabajar</p>
+              <p><strong>1.</strong> Lee el contexto y escribe tu respuesta sin mirar la solución. <strong>2.</strong> Ejecuta en tu tenant de práctica; no uses datos de empleadores.</p>
+              <p><strong>3.</strong> Documenta evidencia: parámetros, run ID, filas leídas, filas mergeadas, watermark y errores. <strong>4.</strong> Al final, compara con la rúbrica y anota una decisión que cambiarías.</p>
+              <p><strong>Regla:</strong> si no puedes explicar qué ventana procesó un run, todavía no dominas el incremental.</p>
+            </div>
+          </header>
+
+          <section class="section" id="antes">
+            <div class="section-head">
+              <span class="section-index">00</span>
+              <h2>Antes de empezar</h2>
+            </div>
+            <div class="grid grid--3">
+              <div class="card">
+                <span class="card__kicker">Entorno</span>
+                <h3>Tenant de práctica</h3>
+                <p>Workspace <code>fabric-de-dev</code>, lakehouse <code>lh_retailops</code> y capacity Trial o F. Para el estado y la fuente SQL, crea un warehouse <code>wh_retailops</code> si no existe.</p>
+              </div>
+              <div class="card">
+                <span class="card__kicker">Datos</span>
+                <h3>Sintéticos</h3>
+                <p>Usa la tabla <code>sales_landing</code> de la demo o genera tus propias ventas. Nada de datos, capturas ni credenciales de tus empleadores.</p>
+              </div>
+              <div class="card">
+                <span class="card__kicker">Evidencia</span>
+                <h3>Bitácora</h3>
+                <p>Guarda run ID, ventana, filas leídas, filas mergeadas, watermark anterior/nuevo y resultado. Una captura sin números no es evidencia.</p>
+              </div>
+            </div>
+
+            <div class="callout callout--warn">
+              <div class="callout__icon" aria-hidden="true">!</div>
+              <div>
+                <p class="callout__title">Plan B si el trial no te deja crear warehouse</p>
+                <p>
+                  Usa el lakehouse como destino y una tabla Delta para el estado, o limita
+                  la misión 2 a Copy job con estado nativo y documenta el diseño del
+                  watermark explícito en papel. Lo que se evalúa es la decisión y la
+                  evidencia, no que el objeto se llame <code>warehouse</code>. No instales
+                  un gateway solo para cumplir la misión 3: diséñalo y justifica.
+                </p>
+              </div>
+            </div>
+
+            <div class="callout callout--staff">
+              <div class="callout__icon" aria-hidden="true">★</div>
+              <div>
+                <p class="callout__title">No hay una única respuesta correcta</p>
+                <p>
+                  Copy job, pipeline con watermark y full copy pueden ser válidos según
+                  volumen, latencia, deletes y costo. La solución no es una plantilla: es
+                  un razonamiento para comparar con el tuyo.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-1">
+            <div class="section-head">
+              <span class="section-index">01</span>
+              <h2>La primera carga que no recarga todo</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">1</span> Guiada · Copy job incremental</span>
+                <div class="mission__meta">
+                  <span class="chip">25–35 min</span>
+                  <span class="chip">Dificultad 1/3</span>
+                  <span class="chip chip--soft">Individual</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Lunes, 09:10. El batch completo de ventas ya no cabe en la ventana nocturna.</p>
+
+                <div class="message message--email">
+                  <div class="message__meta">
+                    <strong>De: Diego · VP de Ingeniería de Datos</strong>
+                    <span class="message__time">09:10</span>
+                  </div>
+                  <p class="message__body"><strong>Asunto:</strong> El batch tarda 5 h 40 y el 99% no cambió</p>
+                  <p class="message__body">Necesito que la carga de ventas mueva solo lo nuevo o modificado. Empieza por la opción más simple: Copy job con estado nativo. Quiero ver tres ejecuciones: carga inicial, incremental y rerun. Y quiero saber qué pasa si alguien pulsa Reset.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li>Crea un Copy job que lea <code>sales_landing</code> y escriba en una tabla bronze del lakehouse.</li>
+                  <li>Configura modo incremental con <code>updated_at</code> y una escritura que no duplique al re-ejecutar.</li>
+                  <li>Ejecuta la carga inicial y documenta filas.</li>
+                  <li>Añade dos filas nuevas y actualiza una; ejecuta y demuestra que solo se movió lo cambiado.</li>
+                  <li>Provoca un rerun y verifica que el resultado es el mismo, no el doble.</li>
+                  <li>Prueba Reset con Append en una copia de la tabla y documenta qué ocurre. No lo hagas en la tabla que usarías para el cierre.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Copy job funcionando + tabla de tres runs (filas leídas, filas escritas, total destino) + una nota de 5 líneas sobre Reset y write mode + una frase sobre cuándo elegirías pipeline en lugar de Copy job.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No uses full copy “porque es más simple” sin justificar el volumen.</li>
+                  <li>No dejes Append ciego en la tabla final.</li>
+                  <li>No documentes solo “funcionó”: quiero números y parámetros.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: el estado no lo ves</summary>
+                    <div class="reveal__body">Copy job guarda el estado de la última ejecución correcta. No necesitas una tabla de watermark, pero sí entender qué columna usa para comparar y qué pasa si la cambias.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: el rerun no es un botón neutral</summary>
+                    <div class="reveal__body">Si el destino es Append y vuelves a leer la misma ventana, el resultado es el esperado por el diseño: más filas. El write mode es parte de la idempotencia, no un detalle de la última pantalla.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 3: Reset no borra datos</summary>
+                    <div class="reveal__body">Reset limpia el estado incremental. El destino sigue ahí. Antes de pulsarlo, pregúntate qué va a releer el job y qué write mode tiene.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-2">
+            <div class="section-head">
+              <span class="section-index">02</span>
+              <h2>El watermark que se quedó atrás</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">2</span> Independiente · pipeline con estado</span>
+                <div class="mission__meta">
+                  <span class="chip">30–35 min</span>
+                  <span class="chip">Dificultad 2/3</span>
+                  <span class="chip chip--soft">Individual</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Miércoles, 07:40. Una venta de ayer apareció hoy en el cierre y nadie sabe si se cargó.</p>
+
+                <div class="message">
+                  <div class="message__meta">
+                    <strong>#data-alerts</strong>
+                    <span class="message__time">07:40</span>
+                  </div>
+                  <p class="message__body"><strong>Ana:</strong> el proveedor nos mandó una venta con fecha de ayer a las 06:50 de hoy. El pipeline dice que el watermark ya estaba en el máximo de ayer, así que no la ve. No quiero un full copy cada hora; quiero entender cómo rescatarla sin duplicar el resto.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li>Implementa un pipeline con estado explícito por tabla: watermark anterior y nuevo, ventana y actualización al final.</li>
+                  <li>Decide y documenta los límites de la ventana. Prueba el borde con una fila exactamente en el máximo.</li>
+                  <li>Publica con MERGE por clave, no con Append directo a la tabla final.</li>
+                  <li>Fuerza un fallo entre el copy y la actualización del watermark. Demuestra que el rerun no pierde ni duplica.</li>
+                  <li>Inserta una fila tardía con timestamp anterior al watermark. Demuestra que se pierde sin lookback y que se rescata con lookback.</li>
+                  <li>Escribe qué harías con los deletes: no los implementes si no tienes CDC; documenta la alternativa y su costo.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Pipeline con estado + tabla de runs (ventana, filas leídas, mergeadas, watermark) + prueba de fila tardía + prueba de fallo + párrafo de deletes con decisión y costo.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No calcules el watermark con <code>MAX(updated_at)</code> del destino.</li>
+                  <li>No actualices el estado antes de que el MERGE termine.</li>
+                  <li>No uses <code>&gt;=</code> en el límite inferior sin explicar cómo evitas el duplicado del borde.</li>
+                  <li>No presentes un MERGE sin deduplicar la staging.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: el estado es del proceso</summary>
+                    <div class="reveal__body">El watermark no es “lo último que hay en el destino”. Es “hasta dónde he leído y publicado con éxito”. Si una fila llegó tarde, el destino puede estar más avanzado que el proceso.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: el fallo te dice el orden</summary>
+                    <div class="reveal__body">Falla a propósito después del copy. Si el watermark ya avanzó, perdiste la ventana. Si no avanzó, el rerun reprocesa; el MERGE lo hace seguro.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 3: lookback no es “reprocesar todo”</summary>
+                    <div class="reveal__body">Una ventana extra de horas o días absorbe tardíos y desfases de reloj. Se paga en filas leídas; elige el tamaño con la tasa real de tardíos, no con miedo.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 4: los deletes no aparecen</summary>
+                    <div class="reveal__body">Comparar una columna no te dice qué fila ya no existe. Piensa en anti-join por clave o en CDC. La decisión tiene latencia y costo; no la escondas.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="mision-3">
+            <div class="section-head">
+              <span class="section-index">03</span>
+              <h2>El cierre con 3,1 millones de duplicados</h2>
+            </div>
+
+            <div class="mission">
+              <div class="mission__head">
+                <span class="mission__id"><span class="mission__num">3</span> Senior · incidente, conectividad y operación</span>
+                <div class="mission__meta">
+                  <span class="chip">40–50 min</span>
+                  <span class="chip">Dificultad 3/3</span>
+                  <span class="chip chip--soft">Equipo</span>
+                </div>
+              </div>
+              <div class="mission__body">
+                <h3>Contexto</h3>
+                <p class="mission__sub">Lunes, 08:30. El cierre de mes está contaminado y la fuente real está en un SQL Server on-premises.</p>
+
+                <div class="message message--alert">
+                  <div class="message__meta">
+                    <strong>De: Marta · Analytics Lead</strong>
+                    <span class="message__time">08:30</span>
+                  </div>
+                  <p class="message__body"><strong>Asunto:</strong> 3,1 millones de ventas duplicadas y el margen cayó 4 puntos</p>
+                  <p class="message__body">El incremental usó <code>&gt;=</code> contra el máximo del destino, escribió con Append y alguien re-ejecutó dos veces. Ahora el cierre no cuadra. Necesito la reconstrucción del incidente, el diseño corregido y un runbook para recuperar sin borrar datos buenos.</p>
+                </div>
+                <div class="message">
+                  <div class="message__meta">
+                    <strong>#data-platform</strong>
+                    <span class="message__time">08:44</span>
+                  </div>
+                  <p class="message__body"><strong>Diego:</strong> además, la fuente real es un SQL Server en la oficina. El gateway está instalado en la laptop de un analista. Quiero saber qué hacemos con eso antes del próximo cierre.</p>
+                </div>
+
+                <h4>Lo que necesito de ti</h4>
+                <ol>
+                  <li><strong>Reconstruye el incidente:</strong> línea de tiempo, causa raíz, por qué el rerun duplicó y qué evidencia faltaba.</li>
+                  <li><strong>Rediseña el batch:</strong> elige Copy job o pipeline con watermark, define ventana, lookback, MERGE y orden de actualización del estado. Justifica.</li>
+                  <li><strong>Conectividad:</strong> diseña el acceso al SQL Server on-premises: gateway, identidad, secreto, alta disponibilidad y quién lo administra.</li>
+                  <li><strong>Deletes:</strong> el negocio también necesita reflejar bajas. Decide CDC o reconciliación y mide el trade-off.</li>
+                  <li><strong>Recuperación:</strong> runbook para limpiar duplicados sin borrar ventas buenas, reprocesar y comunicar.</li>
+                  <li><strong>Métricas:</strong> tres indicadores que demuestren que el problema no vuelve.</li>
+                </ol>
+
+                <div class="deliverable">
+                  <strong>Entregable</strong>
+                  Tabla de incidente (síntoma, causa, evidencia), diagrama del flujo objetivo, ADR de write mode y deletes, diseño de conectividad con identidad, runbook de recuperación y tres métricas con umbral.
+                </div>
+
+                <h4>Restricciones</h4>
+                <ul>
+                  <li>No propongas “añadir un test” sin decir qué comprueba y qué bloquea.</li>
+                  <li>No asumas que el MERGE es seguro si la clave se duplica.</li>
+                  <li>No dejes el gateway en una laptop ni con una cuenta personal.</li>
+                  <li>No ocultes el costo del lookback, la reconciliación o el gateway.</li>
+                  <li>No diseñes un monolito de cien actividades; separa ingesta, publicación y validación si aporta.</li>
+                </ul>
+
+                <div class="hint-row">
+                  <details class="reveal">
+                    <summary>Pista 1: separa “detectar” de “reparar”</summary>
+                    <div class="reveal__body">El incidente tiene tres capas: el filtro duplicó, el write mode permitió duplicar y el rerun manual amplificó. La recuperación necesita identificar el lote contaminado antes de borrar.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 2: el gateway es un sistema</summary>
+                    <div class="reveal__body">Piensa en máquina dedicada, cuenta de servicio, alta disponibilidad, versión, red de salida y monitoreo. Una laptop que se suspende no es una pieza de producción.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 3: los deletes tienen latencia</summary>
+                    <div class="reveal__body">CDC captura el delete cuando ocurre; una reconciliación por clave lo detecta en la siguiente pasada. Ninguna es gratis. Elige según el SLA y el volumen.</div>
+                  </details>
+                  <details class="reveal">
+                    <summary>Pista 4: la evidencia es parte del diseño</summary>
+                    <div class="reveal__body">Batch_id, ventana, filas leídas, filas mergeadas y watermark anterior/nuevo permiten identificar qué runs contaminaron el cierre. Sin eso, la reparación es arqueología.</div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" id="antes-solucion">
+            <div class="section-head">
+              <span class="section-index">04</span>
+              <h2>Antes de abrir la solución</h2>
+            </div>
+            <ul class="checklist">
+              <li>
+                <label>
+                  <input type="checkbox" id="ex5-check-1" data-persist>
+                  <span>Ejecuté los incrementales en mi tenant, no solo los dibujé.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex5-check-2" data-persist>
+                  <span>Tengo evidencia de una carga inicial, un incremental y un rerun sin duplicados.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex5-check-3" data-persist>
+                  <span>Probé una fila tardía y expliqué mi decisión de lookback.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex5-check-4" data-persist>
+                  <span>Puedo explicar qué pasa con un delete y qué alternativa elegí.</span>
+                </label>
+              </li>
+              <li>
+                <label>
+                  <input type="checkbox" id="ex5-check-5" data-persist>
+                  <span>Puedo defender la conectividad on-premises sin decir “lo configuró alguien”.</span>
+                </label>
+              </li>
+            </ul>
+
+            <div class="callout callout--staff">
+              <div class="callout__icon" aria-hidden="true">★</div>
+              <div>
+                <p class="callout__title">Cómo usar la solución</p>
+                <p>
+                  No busques una plantilla para replicar. Compara tu razonamiento:
+                  ¿qué riesgo viste tú que la solución no vio? ¿Qué supuesto tuyo no
+                  sobreviviría a un rerun, a una fila tardía o a un delete?
+                </p>
+              </div>
+            </div>
+
+            <div class="hero-actions">
+              <a class="btn btn--primary" href="../solutions/dia-05-solucion.html">
+                Abrir solución y rúbrica
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+              <a class="btn btn--ghost" href="../lessons/dia-05-ingesta-incremental.html">Volver a la lección</a>
+            </div>
+          </section>
+
+          <section class="section" id="entrevista">
+            <div class="section-head">
+              <span class="section-index">05</span>
+              <h2>Bonus: modo entrevista</h2>
+            </div>
+            <div class="callout callout--key">
+              <div class="callout__icon" aria-hidden="true">i</div>
+              <div>
+                <p class="callout__title">Pregunta de 90 segundos</p>
+                <p>
+                  “Tienes una tabla on-premises que cambia poco, pero el negocio exige
+                  deletes. ¿Cómo diseñas la carga y qué le dices al equipo sobre el costo y
+                  la latencia?”
+                </p>
+              </div>
+            </div>
+            <p>
+              Una respuesta fuerte menciona: gateway e identidad, watermark con ventana y
+              lookback, MERGE por clave, deletes con CDC o reconciliación, evidencia,
+              costo de la reconciliación y un SLA explícito. Si además distingues “no
+              perder” de “no duplicar”, estás por encima de la media.
+            </p>
+          </section>
+
+          <nav class="lesson-nav" aria-label="Navegación">
+            <a href="../lessons/dia-05-ingesta-incremental.html">
+              <span class="lesson-nav__dir">Anterior</span>
+              <span class="lesson-nav__title">Lección del Día 05</span>
+            </a>
+            <a href="../solutions/dia-05-solucion.html">
+              <span class="lesson-nav__dir">Siguiente</span>
+              <span class="lesson-nav__title">Solución y rúbrica</span>
+            </a>
+          </nav>
+
+          <footer class="site-footer">
+            <span>RetailOps 360 · Microsoft Fabric Master Course · <span data-year>2026</span></span>
+            <div class="site-footer__links">
+              <a href="../lessons/dia-05-ingesta-incremental.html">Lección</a>
+              <a href="../solutions/dia-05-solucion.html">Solución</a>
+              <a href="../index.html">Portada</a>
+            </div>
+          </footer>
+        </article>
+
+        <aside class="toc" aria-label="En este laboratorio">
+          <p class="toc__label">En este laboratorio</p>
+          <ul>
+            <li><a href="#antes">Antes de empezar</a></li>
+            <li><a href="#mision-1">01 · Primera carga</a></li>
+            <li><a href="#mision-2">02 · Watermark atrás</a></li>
+            <li><a href="#mision-3">03 · Cierre duplicado</a></li>
+            <li><a href="#antes-solucion">Antes de la solución</a></li>
+            <li><a href="#entrevista">Modo entrevista</a></li>
+          </ul>
+          <a class="toc__back" href="../solutions/dia-05-solucion.html">Ir a la solución →</a>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="../assets/course.js"></script>
+</body>
+</html>

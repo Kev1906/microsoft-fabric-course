@@ -10,12 +10,13 @@ Abre **`index.html`** con doble clic. No hay build step, servidor ni dependencia
 - Lección actual: `lessons/dia-04-data-factory-pipelines-i.html`
 - Laboratorio actual: `exercises/dia-04-ejercicios.html`
 - Solución y rúbrica: `solutions/dia-04-solucion.html`
+- Día 05 publicado: `lessons/dia-05-ingesta-incremental.html` · `exercises/dia-05-ejercicios.html` · `solutions/dia-05-solucion.html`
 
 ## Estado
 
-Los **Días 1–3** se completaron en el cuaderno anterior: mapa mental de Fabric, OneLake y capacity/gobierno. Esta edición visual retoma en el **Día 4 — Data Factory pipelines I**.
+Los **Días 1–3** se completaron en el cuaderno anterior: mapa mental de Fabric, OneLake y capacity/gobierno. Esta edición visual retoma en el **Día 4 — Data Factory pipelines I** y ya publica el **Día 5 — Ingesta incremental y conectividad real**.
 
-- Día actual: **04 / 24**
+- Día actual: **04 / 24** (sesión pendiente); **Día 05 publicado** para preparación
 - Formato: HTML autocontenido, tema claro/oscuro, responsive, sin CDN
 - Proyecto: **RetailOps 360**
 - Certificación: **DP-700 no agendada**; es una consecuencia del curso, no un requisito
@@ -55,8 +56,11 @@ Microsoft Fabric/
 │   ├── course.css
 │   └── course.js
 ├── lessons/dia-04-data-factory-pipelines-i.html
+├── lessons/dia-05-ingesta-incremental.html
 ├── exercises/dia-04-ejercicios.html
+├── exercises/dia-05-ejercicios.html
 ├── solutions/dia-04-solucion.html
+├── solutions/dia-05-solucion.html
 ├── datasets/
 │   ├── generate_retailops.py
 │   └── README.md
@@ -77,18 +81,18 @@ Microsoft Fabric/
 
 ## Generar las siguientes sesiones
 
-Cuando el Día 4 esté cerrado:
+Cuando cierres el Día 4, dicta el Día 5. Para generar el Día 6:
 
 ```text
-/dia-fabric 5
+/dia-fabric 6
 ```
 
-O pide: “usa fabric-day-generator para el Día 5”. El skill lee el día anterior, genera lección, laboratorio y solución HTML, actualiza la portada y valida los enlaces.
+O pide: “usa fabric-day-generator para el Día 6”. El skill lee el día anterior, genera lección, laboratorio y solución HTML, actualiza la portada y valida los enlaces.
 
 Validador manual:
 
 ```bash
-python .opencode/skills/fabric-day-generator/scripts/check_day.py 4
+python .opencode/skills/fabric-day-generator/scripts/check_day.py 5
 ```
 
 ## DP-700
@@ -107,4 +111,4 @@ El curso no memoriza la interfaz: construye y opera el proyecto. El examen valid
 - [Data Factory overview](https://learn.microsoft.com/en-us/fabric/data-factory/data-factory-overview)
 - [DP-700 study guide](https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/dp-700)
 
-**Documentación verificada:** 2026-11-20. Fabric cambia con frecuencia; revisa release notes y `ms.date` antes de fijar una lección.
+**Documentación verificada:** 2026-11-24. Fabric cambia con frecuencia; revisa release notes y `ms.date` antes de fijar una lección.

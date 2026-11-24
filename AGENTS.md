@@ -5,8 +5,8 @@
 > se está construyendo, cómo se enseña, qué reglas de plataforma aplican y en qué sesión
 > va el estudiante.
 >
-> **Última actualización:** 2026-11-20
-> **Documentación oficial verificada:** 2026-11-20 (Día 4 y base del curso)
+> **Última actualización:** 2026-11-24
+> **Documentación oficial verificada:** 2026-11-24 (Días 4 y 5)
 > **Curso creado:** 2026-11-09 · **Edición HTML canónica:** 2026-11-20
 
 ---
@@ -17,17 +17,18 @@
 |---|---|
 | Curso | Microsoft Fabric Master Course — Data Engineering Senior |
 | Sesiones | 24 (2.5–3 h cada una, 3 por semana ≈ 8 semanas) |
-| Día actual | **4 / 24 — material listo, sesión pendiente** |
-| Última sesión | 2026-11-20 — Días 1–3 completados en el cuaderno anterior; Día 4 canónico en HTML generado en esta edición |
-| Próxima acción | Dictar el Día 4 desde `lessons/dia-04-data-factory-pipelines-i.html`: recuperación → gancho → modelo mental → demo → laboratorio. Cerrar `pl_ingest_batch` y su evidencia antes del Día 5 |
-| Entorno | Trial activo según el cuaderno anterior (F64, 60 días, ~2026-11-09, South Central US); `fabric-de-dev`, `lh_retailops` (bronze/silver/gold) y `bronze.sales_raw`. **Verificar en la sesión 4** |
+| Día actual | **4 / 24 — material listo, sesión pendiente; Día 5 publicado** |
+| Última sesión | 2026-11-20 — Días 1–3 completados en el cuaderno anterior; material de los Días 4 y 5 generado, sesiones pendientes |
+| Próxima acción | Dictar el Día 4 desde `lessons/dia-04-data-factory-pipelines-i.html`: recuperación → gancho → modelo mental → demo → laboratorio. Cerrar `pl_ingest_batch` y su evidencia; después dictar el Día 5 desde `lessons/dia-05-ingesta-incremental.html`. No avanzar al Día 6 hasta cerrar ambos entregables |
+| Entorno | Trial activo según el cuaderno anterior (F64, 60 días, ~2026-11-09, South Central US); `fabric-de-dev`, `lh_retailops` (bronze/silver/gold), `bronze.sales_raw` y `wh_retailops` para el estado del Día 5. **Verificar en la sesión 4** |
 | Proyecto | **RetailOps 360** (batch + streaming + warehouse + BI + gobierno) |
 | Certificación | DP-700 **no agendada**. Es una consecuencia del curso, no un requisito |
 | Confianza global | — (se registrará después de cada sesión) |
 
 **Regla de arranque:** el curso retoma en el **Día 4**. Los Días 1–3 se consideran
-completados en el cuaderno anterior y no se regeneran. No avanzar al Día 5 hasta
-cerrar el entregable del Día 4 (pipeline + evidencia + ADR).
+completados en el cuaderno anterior y no se regeneran. No dictar el Día 5 hasta
+cerrar el entregable del Día 4 (pipeline + evidencia + ADR); el material del Día 5
+ya está publicado para preparación.
 
 ---
 
@@ -448,7 +449,7 @@ Microsoft Fabric/
   `DP-700: Orchestrate → pipeline vs notebook, parámetros`
   **Entregable:** `pl_ingest_batch` parametrizado con historial de ejecuciones.
 
-- [ ] **Día 5 — Ingesta incremental y conectividad real.**
+- [ ] **Día 5 — Ingesta incremental y conectividad real.** *(material HTML listo; sesión pendiente)*
   Full vs incremental, watermark y CDC, idempotencia, upsert, Copy job, gateways,
   workspace identity, service principal, managed identity y Key Vault.
   `DP-700: Loading patterns → full/incremental`
@@ -965,6 +966,7 @@ El curso se considera completado cuando:
 
 | Fecha | Cambio |
 |---|---|
+| 2026-11-24 | **Día 5 generado:** lección, laboratorio y solución HTML sobre ingesta incremental, watermark, CDC, idempotencia, Copy job, gateways, workspace identity, service principal y Key Vault. Día 4 desbloquea y enlaza al Día 5; índice y progreso actualizados. El Día 4 sigue pendiente de sesión. |
 | 2026-11-20 | **Edición HTML canónica:** se elimina el build step y los `.md`; se adopta el sistema visual del curso Data CI/CD, el Día 4 reconstruido con assets compartidos y el skill `fabric-day-generator` + `/dia-fabric`. Días 1–3 se conservan como completados en el cuaderno anterior. |
 | 2026-11-20 | La lección canónica pasa de `.md` a **HTML** desde el Día 4 (completa, sin resumir; didáctica antes que interactividad). Día 4 generado; primera versión con build script, reemplazada por la edición HTML canónica. |
 | 2026-11-20 | Día 3 generado. Los ejercicios incluyen espacio de respuesta a pedido del estudiante. |
