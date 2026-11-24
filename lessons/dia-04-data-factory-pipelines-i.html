@@ -114,7 +114,7 @@
               <p><strong>Parámetros</strong> entran al run y no cambian. <strong>Variables</strong> cambian durante el run. Las <strong>expresiones</strong> empiezan con <code>@</code>.</p>
               <p><strong>Retry</strong> sirve para fallos transitorios. <strong>Failure path</strong> sirve para contener el fallo. Ninguno de los dos arregla una carga no idempotente.</p>
             </div>
-            <p class="meta-note">Docs verificadas: 2026-11-20 · Núcleo GA · “Retry conditions” está en Preview.</p>
+            <p class="meta-note">Docs verificadas: 2026-11-23 · Núcleo GA · “Retry conditions” está en Preview · El item “Data pipeline” ahora se llama “Pipeline”.</p>
           </header>
 
           <!-- 00 -->
@@ -1063,8 +1063,8 @@
             <ol class="rail">
               <li>
                 <span class="rail__dot">1</span>
-                <span class="rail__title">Nuevo item → Data pipeline</span>
-                <span class="rail__body">Nombre: <code>pl_ingest_batch</code>. Descripción: “Ingesta batch de ventas a bronze”.</span>
+                <span class="rail__title">Nuevo item → Pipeline</span>
+                <span class="rail__body">Nombre: <code>pl_ingest_batch</code>. Descripción: “Ingesta batch de ventas a bronze”. En el buscador escribe <strong>Pipeline</strong>, no “Data pipeline”.</span>
               </li>
               <li>
                 <span class="rail__dot">2</span>
@@ -1072,6 +1072,26 @@
                 <span class="rail__body">Selecciona el fondo del canvas y busca la pestaña de parámetros del pipeline.</span>
               </li>
             </ol>
+
+            <div class="callout callout--warn">
+              <div class="callout__icon" aria-hidden="true">!</div>
+              <div>
+                <p class="callout__title">Si no ves “Data pipeline”, es normal</p>
+                <p>
+                  Desde septiembre de 2025 el item se llama <strong>Pipeline</strong> en
+                  la lista de workspace y en <strong>New item</strong>. Microsoft cambió
+                  solo el nombre visible: el tipo de item sigue siendo
+                  <code>DataPipeline</code> en la API. Si buscas “Data pipeline” y no
+                  aparece, escribe <strong>Pipeline</strong>.
+                </p>
+                <p>
+                  Si tampoco aparece <strong>Pipeline</strong>, revisa en
+                  <strong>Workspace settings → Workspace type</strong> que el workspace
+                  esté en <strong>Fabric Trial</strong> o en una capacity F. Un workspace
+                  en Pro no habilita items de Data Factory.
+                </p>
+              </div>
+            </div>
 
             <h3>Paso 2 · Define el contrato de parámetros</h3>
             <div class="table-wrap">
